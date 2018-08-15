@@ -101,6 +101,10 @@ static unsigned get_pipe_bind(int usage)
 	return bind;
 }
 
+#ifndef DRM_FORMAT_MOD_INVALID
+#define DRM_FORMAT_MOD_INVALID ((1ULL << 56) - 1)
+#endif
+
 static struct pipe_buffer *get_pipe_buffer_locked(struct pipe_manager *pm,
 		const struct gralloc_drm_handle_t *handle)
 {
@@ -137,7 +141,7 @@ static struct pipe_buffer *get_pipe_buffer_locked(struct pipe_manager *pm,
 		buf->winsys.type = DRM_API_HANDLE_TYPE_SHARED;
 		buf->winsys.handle = handle->name;
 		buf->winsys.stride = handle->stride;
-
+		buf->winsys.modifier = DRM_FORMAT_MOD_INVALID;
 		buf->resource = pm->screen->resource_from_handle(pm->screen,
 				&templ, &buf->winsys, 0);
 		if (!buf->resource)
